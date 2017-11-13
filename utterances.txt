@@ -1,0 +1,7 @@
+SendMessage send message to {Name}
+SendMessage send {Name} a message
+SendMessage tell {Name}
+ReceiveMessage give me my message from {Name}
+ReceiveMessage play message from {Name}
+PrepareMessage my message is {Please take out the trash|Message}
+PrepareMessage the message is {eat dinner|Message}
