@@ -117,12 +117,21 @@ def receive_message(intent, session):
     db_response = table.scan()
     session_attributes = {}
     sender_name = intent["slots"]["Name"]["value"].lower()
-    message = ""
+    message = []
+    speech_output = ""
     for index, row in enumerate(db_response["Items"]):
         if row['sender_name'].lower() == sender_name:
-            message = row["message"]
+            message.append(row["message"])
     card_title = "AIM"
-    speech_output = "This is your message from {}. {}".format(sender_name, message)
+    number_of_messages = len(message)
+    if number_of_messages == 0:
+        speech_output = "You don't have any messages from {}. ".format(sender_name)
+    elif number_of_messages == 1:
+        speech_output = "This is your message from {}. {} ".format(sender_name, message[0])
+    else:
+        speech_output = "Here are your messages from {}. ".format(sender_name)
+        for index, value in enumerate(message):
+            speech_output += "Message {}. {}. ".format(index + 1, value)
     reprompt_text = ""
     should_end_session = True
     return build_response(session_attributes, build_speechlet_response(
