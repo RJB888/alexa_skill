@@ -7,18 +7,18 @@
     },
     "attributes": {},
     "user": {
-      "userId": "amzn1.ask.account.<userd_id>"
+      "userId": "amzn1.ask.account.<userid>"
     }
   },
   "request": {
     "type": "IntentRequest",
     "requestId": "EdwRequestId.4228cc9e-f815-4024-8da2-6709a02fe464",
     "intent": {
-      "name": "EstablishRecipient",
+      "name": "ReceiveMessage",
       "slots": {
         "Name": {
           "name": "Name",
-          "value": "bob"
+          "value": "Bill"
         }
       }
     },
@@ -34,7 +34,7 @@
         "applicationId": "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"
       },
       "user": {
-        "userId": "amzn1.ask.account.<user_id>"
+        "userId": "amzn1.ask.account.<userid"
       },
       "device": {
         "supportedInterfaces": {}

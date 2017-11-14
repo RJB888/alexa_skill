@@ -2,17 +2,13 @@ import boto3
 import datetime
 from rx import Observable
 
-# I LIKE RAINBOWS
-# sender_name = 'JimBob'
-# receiver_name = 'Jolene'
-# message_body = 'Git me my fiddle.'
-#this is the main session handling function
-def handler(event, context):
 
+def lambda_handler(event, context):
+    """."""
     # show_table() #remove this
     # TODO implement
     if (event["session"]["application"]["applicationId"] !=
-        "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):
+            "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):
         raise ValueError("Invalid Application ID")
 
     if event["session"]["new"]:
@@ -25,7 +21,8 @@ def handler(event, context):
     elif event["request"]["type"] == "SessionEndedRequest":
         return on_session_ended(event["request"], event["session"])
 
- #this function adds an entry in the database
+
+# this function adds an entry in the database
 def show_table():
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
@@ -40,15 +37,15 @@ def show_table():
     print(sorted(response['Items'], key=lambda x: x['sender_name']))
 
 
-  #this function does some stuff
 def on_session_started(session_started_request, session):
     print("Starting new session.")
 
 
 def on_launch(launch_request, session):
     return get_welcome_response()
+    # this function launches the appropriate intent based on utterance
 
-    #this function launches the appropriate intent based on utterance
+
 def on_intent(intent_request, session):
     intent = intent_request["intent"]
     intent_name = intent_request["intent"]["name"]
@@ -72,6 +69,7 @@ def on_intent(intent_request, session):
 
 """
 
+
 def get_recipient(intent, session):
     """Repeat function  the message that was saved to the database."""
     receiver_name = intent["slots"]["Name"]["value"]
@@ -89,16 +87,16 @@ def verification_of_message(intent, session):
     session["attributes"]["message_body"] = message_body
     card_title = "AIM"
     speech_output = "OK.  Your message to {} is, {}, right?".format(session["attributes"]["recipient"], message_body)
-    #if not ok, prompt for repeat of message? re run get_recipient()?
+    # if not ok, prompt for repeat of message? re run get_recipient()?
     reprompt_text = ""
-    #at some point add the message to the db
+    # at some point add the message to the db
     save_msg_to_db(session)
     should_end_session = True
     return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def save_msg_to_db(session):
-    print("this ran")
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
@@ -110,16 +108,21 @@ def save_msg_to_db(session):
         'date': datetime.datetime.now().strftime('%m/%d/%y'),
         'message': session["attributes"]["message_body"],
         'sender_name': "RedCoat"
-        })
+    })
+
 
 def receive_message(intent, session):
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
     session_attributes = {}
-    sender_name = intent["slots"]["Name"]["value"]
+    sender_name = intent["slots"]["Name"]["value"].lower()
+    message = ""
+    for index, row in enumerate(db_response["Items"]):
+        if row['sender_name'].lower() == sender_name:
+            message = row["message"]
     card_title = "AIM"
-    speech_output = "This is your message from {}".format(intent["slots"]["Name"]["value"])
+    speech_output = "This is your message from {}. {}".format(sender_name, message)
     reprompt_text = ""
     should_end_session = True
     return build_response(session_attributes, build_speechlet_response(
@@ -135,6 +138,7 @@ def on_session_ended():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
+
 def get_welcome_response():
     session_attributes = {}
     card_title = "AIM"
@@ -143,6 +147,7 @@ def get_welcome_response():
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
+
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
     return {
@@ -163,6 +168,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
         },
         "shouldEndSession": should_end_session
     }
+
 
 def build_response(session_attributes, speechlet_response):
     return {
