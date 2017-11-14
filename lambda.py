@@ -1,9 +1,9 @@
 import boto3
 import datetime
 
-sender_name = 'JimBob'
-receiver_name = 'Jolene'
-message_body = 'Git me my fiddle.'
+# sender_name = 'JimBob'
+# receiver_name = 'Jolene'
+# message_body = 'Git me my fiddle.'
 #this is the main session handling function
 def lambda_handler(event, context):
     
@@ -72,10 +72,9 @@ def on_intent(intent_request, session):
 
 def get_recipient(intent, session):
     """Repeat function  the message that was saved to the database."""
-    session_attributes = {}
-    card_title = "AIM"
-    global receiver_name
     receiver_name = intent["slots"]["Name"]["value"]
+    session_attributes = {"recipient": receiver_name}
+    card_title = "AIM"
     speech_output = "OK send a message to {} What is your message".format(receiver_name)
     reprompt_text = ""
     should_end_session = False
@@ -84,20 +83,19 @@ def get_recipient(intent, session):
 
 
 def verification_of_message(intent, session):
-    session_attributes = {}
-    card_title = "AIM"
-    global message_body
     message_body = intent["slots"]["Message"]["value"]
-    speech_output = "OK.  Your message to {} is, {}, right?".format(receiver_name, intent["slots"]["Message"]["value"])
+    session["attributes"]["message_body"] = message_body
+    card_title = "AIM"
+    speech_output = "OK.  Your message to {} is, {}, right?".format(session["attributes"]["recipient"], message_body)
     #if not ok, prompt for repeat of message? re run get_recipient()?
     reprompt_text = ""
     #at some point add the message to the db
-    save_msg_to_db()
+    save_msg_to_db(session)
     should_end_session = True
-    return build_response(session_attributes, build_speechlet_response(
+    return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-def save_msg_to_db():
+def save_msg_to_db(session):
     print("this ran")
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
@@ -106,14 +104,18 @@ def save_msg_to_db():
     print(sorted(db_response["Items"], key=lambda x: x['id'])[-1]['id'])
     table.put_item(Item={
         'id': next_index,
-        'receiver_name': receiver_name,
+        'receiver_name': session["attributes"]["recipient"],
         'date': datetime.datetime.now().strftime('%m/%d/%y'),
-        'message': message_body,
+        'message': session["attributes"]["message_body"],
         'sender_name': "RedCoat"
         })
 
 def receive_message(intent, session):
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('aim_messages')
+    db_response = table.scan()
     session_attributes = {}
+    sender_name = intent["slots"]["Name"]["value"]
     card_title = "AIM"
     speech_output = "This is your message from {}".format(intent["slots"]["Name"]["value"])
     reprompt_text = ""
