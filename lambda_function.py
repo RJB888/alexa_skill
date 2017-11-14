@@ -1,13 +1,15 @@
 import boto3
 import datetime
+from rx import Observable
 
-sender_name = ''
-receiver_name = ''
-message_body = ''
+# I LIKE RAINBOWS
+# sender_name = 'JimBob'
+# receiver_name = 'Jolene'
+# message_body = 'Git me my fiddle.'
 #this is the main session handling function
-def lambda_handler(event, context):
-    
-    show_table() #remove this
+def handler(event, context):
+
+    # show_table() #remove this
     # TODO implement
     if (event["session"]["application"]["applicationId"] !=
         "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):
@@ -15,14 +17,14 @@ def lambda_handler(event, context):
 
     if event["session"]["new"]:
         on_session_started({"requestId": event["request"]["requestId"]}, event["session"])
-    print(event)    
+    # print(event)
     if event["request"]["type"] == "LaunchRequest":
         return on_launch(event["request"], event["session"])
     elif event["request"]["type"] == "IntentRequest":
         return on_intent(event["request"], event["session"])
     elif event["request"]["type"] == "SessionEndedRequest":
         return on_session_ended(event["request"], event["session"])
- 
+
  #this function adds an entry in the database
 def show_table():
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
@@ -36,16 +38,16 @@ def show_table():
     })
     response = table.scan()
     print(sorted(response['Items'], key=lambda x: x['sender_name']))
-    
 
-  #this function does some stuff  
+
+  #this function does some stuff
 def on_session_started(session_started_request, session):
     print("Starting new session.")
-    
+
 
 def on_launch(launch_request, session):
     return get_welcome_response()
-    
+
     #this function launches the appropriate intent based on utterance
 def on_intent(intent_request, session):
     intent = intent_request["intent"]
@@ -72,9 +74,9 @@ def on_intent(intent_request, session):
 
 def get_recipient(intent, session):
     """Repeat function  the message that was saved to the database."""
-    session_attributes = {}
-    card_title = "AIM"
     receiver_name = intent["slots"]["Name"]["value"]
+    session_attributes = {"recipient": receiver_name}
+    card_title = "AIM"
     speech_output = "OK send a message to {} What is your message".format(receiver_name)
     reprompt_text = ""
     should_end_session = False
@@ -83,38 +85,47 @@ def get_recipient(intent, session):
 
 
 def verification_of_message(intent, session):
-    session_attributes = {}
-    card_title = "AIM"
     message_body = intent["slots"]["Message"]["value"]
-    speech_output = "OK.  Your message to {} is, {}, right?".format(receiver_name, intent["slots"]["Message"]["value"])
+    session["attributes"]["message_body"] = message_body
+    card_title = "AIM"
+    speech_output = "OK.  Your message to {} is, {}, right?".format(session["attributes"]["recipient"], message_body)
     #if not ok, prompt for repeat of message? re run get_recipient()?
     reprompt_text = ""
     #at some point add the message to the db
-    save_msg_to_db()
+    save_msg_to_db(session)
     should_end_session = True
-    return build_response(session_attributes, build_speechlet_response(
+    return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-def save_msg_to_db():
+def save_msg_to_db(session):
+    print("this ran")
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
+    db_response = table.scan()
+    next_index = 1 + sorted(db_response["Items"], key=lambda x: x['id'])[-1]['id']
+    print(sorted(db_response["Items"], key=lambda x: x['id'])[-1]['id'])
     table.put_item(Item={
-        'receiver_name': receiver_name,
-        'date': datetime.datetime.now().strftime('%m/%d/%y')
-        'message': message_body,
-        'sender_name': "Red Coat"
+        'id': next_index,
+        'receiver_name': session["attributes"]["recipient"],
+        'date': datetime.datetime.now().strftime('%m/%d/%y'),
+        'message': session["attributes"]["message_body"],
+        'sender_name': "RedCoat"
         })
 
 def receive_message(intent, session):
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('aim_messages')
+    db_response = table.scan()
     session_attributes = {}
+    sender_name = intent["slots"]["Name"]["value"]
     card_title = "AIM"
     speech_output = "This is your message from {}".format(intent["slots"]["Name"]["value"])
     reprompt_text = ""
     should_end_session = True
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-    
-    
+
+
 def on_session_ended():
     session_attributes = {}
     card_title = "AIM - Thanks"
@@ -159,4 +170,4 @@ def build_response(session_attributes, speechlet_response):
         "sessionAttributes": session_attributes,
         "response": speechlet_response
     }
-    
+
