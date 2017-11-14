@@ -7,7 +7,7 @@ import json
 @pytest.fixture
 def establish_recipient_intent():
     """Create a fixture to handle the intent establish recipient."""
-    from lambda_code import lambda_handler
+    from lambda_function import lambda_handler
     event = {
         "session": {
             "new": True,

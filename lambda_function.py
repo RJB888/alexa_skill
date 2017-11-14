@@ -1,6 +1,6 @@
 import boto3
 import datetime
-from rx import Observable
+# from rx import Observable
 
 
 def lambda_handler(event, context):
@@ -124,7 +124,7 @@ def receive_message(intent, session):
             message.append(row["message"])
     card_title = "AIM"
     number_of_messages = len(message)
-    if number_of_messages == 0:
+    if not number_of_messages:
         speech_output = "You don't have any messages from {}. ".format(sender_name)
     elif number_of_messages == 1:
         speech_output = "This is your message from {}. {} ".format(sender_name, message[0])
