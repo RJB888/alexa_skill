@@ -2,7 +2,7 @@
 
 import boto3
 import datetime
-from rx import Observable
+# from rx import Observable
 
 
 def lambda_handler(event, context):
@@ -46,16 +46,64 @@ def on_intent(intent_request, session):
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
         return on_session_ended()
+    elif intent_name == "AMAZON.YesIntent":
+        return handle_verification(intent, session)
+    elif intent_name == "AMAZON.NoIntent":
+        return handle_noIntent(intent, session)
     else:
         raise ValueError("Invalid intent")
+
+def handle_noIntent(intent, session):
+    if "message_body" in session["attributes"]:
+        return re_prompt_message(intent, session)
+    else:
+        return re_prompt_name(intent, session)
+
+def re_prompt_message(intent, session):
+    session["attributes"]["message_body"] = ""
+    session_attributes = session["attributes"]
+    reprompt_text = ""
+    card_title = "AIM"
+    should_end_session = False
+    speech_output = "OK, what is the message?"
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def re_prompt_name(intent, session):
+    session_attributes = {}
+    reprompt_text = ""
+    card_title = "AIM"
+    should_end_session = False
+    speech_output = "OK, who am I sending the message to?"
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+        
+def handle_verification(intent, session):
+    if "message_body" in session["attributes"]:
+        return save_msg_to_db(session)
+    else:
+        return what_is_your_message(intent, session)
+
+def what_is_your_message(intent, session):
+    """Repeat function  the message that was saved to the database."""
+    receiver_name = session["attributes"]["receiver_name"]
+    session_attributes = {"receiver_name":receiver_name}
+    card_title = "AIM"
+    speech_output = "OK, what is your message to {}?".format(receiver_name)
+    reprompt_text = ""
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
 
 
 def get_recipient(intent, session):
     """Repeat function  the message that was saved to the database."""
-    receiver_name = intent["slots"]["Name"]["value"]
+    receiver_name = intent["slots"]["ForName"]["value"]
     session_attributes = {"receiver_name": receiver_name}
     card_title = "AIM"
-    speech_output = "OK, send a message to {}. What is your message.".format(receiver_name)
+    speech_output = "OK, send a message to {}, right?".format(receiver_name)
     reprompt_text = ""
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
@@ -71,8 +119,7 @@ def verification_of_message(intent, session):
     # if not ok, prompt for repeat of message? re run get_receiver_name()?
     reprompt_text = ""
     # at some point add the message to the db
-    save_msg_to_db(session)
-    should_end_session = True
+    should_end_session = False
     return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -92,6 +139,12 @@ def save_msg_to_db(session):
         'sender_name': "RedCoat",  # do we want to include sender name?
         'heard': False
     })
+    card_title = "AIM"
+    speech_output = "OK.  Your message is saved."
+    reprompt_text = ""
+    should_end_session = True
+    return build_response(session["attributes"], build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
 
 
 def receive_message(intent, session):
@@ -100,7 +153,7 @@ def receive_message(intent, session):
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
     session_attributes = {}
-    receiver_name = intent["slots"]["Name"]["value"].lower()
+    receiver_name = intent["slots"]["ForName"]["value"].lower()
     message = []
     speech_output = ""
     for index, row in enumerate(db_response["Items"]):
@@ -139,7 +192,7 @@ def delete_message_by_sender(intent, session):
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
-    sender_name = intent["slots"]["Name"]["value"]
+    sender_name = intent["slots"]["FromName"]["value"]
     senders_last_message = sorted(db_response["Items"], key=lambda x: x['id'])
     card_title = "Delete Message"
     speech_output = "Your message has been deleted."
