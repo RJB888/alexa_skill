@@ -55,10 +55,21 @@ def on_intent(intent_request, session):
 
 def handle_noIntent(intent, session):
     if "message_body" in session["attributes"]:
-        pass
+        return re_prompt_message(intent, session)
     else:
         return re_prompt_name(intent, session)
-        
+
+def re_prompt_message(intent, session):
+    session["attributes"]["message_body"] = ""
+    session_attributes = session["attributes"]
+    reprompt_text = ""
+    card_title = "AIM"
+    should_end_session = False
+    speech_output = "OK, what is the message?"
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
 def re_prompt_name(intent, session):
     session_attributes = {}
     reprompt_text = ""
@@ -92,7 +103,7 @@ def get_recipient(intent, session):
     receiver_name = intent["slots"]["ForName"]["value"]
     session_attributes = {"receiver_name": receiver_name}
     card_title = "AIM"
-    speech_output = "OK, send a message to {} right?".format(receiver_name)
+    speech_output = "OK, send a message to {}, right?".format(receiver_name)
     reprompt_text = ""
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
