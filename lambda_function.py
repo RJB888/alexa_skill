@@ -49,13 +49,29 @@ def on_intent(intent_request, session):
     elif intent_name == "AMAZON.YesIntent":
         return handle_verification(intent, session)
     elif intent_name == "AMAZON.NoIntent":
-        return
+        return handle_noIntent(intent, session)
     else:
         raise ValueError("Invalid intent")
 
-def handle_verification(intent, session):
-    if "Message" in session["attributes"]:
+def handle_noIntent(intent, session):
+    if "message_body" in session["attributes"]:
         pass
+    else:
+        return re_prompt_name(intent, session)
+        
+def re_prompt_name(intent, session):
+    session_attributes = {}
+    reprompt_text = ""
+    card_title = "AIM"
+    should_end_session = False
+    speech_output = "OK, who am I sending the message to?"
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+        
+def handle_verification(intent, session):
+    if "message_body" in session["attributes"]:
+        return save_msg_to_db(session)
     else:
         return what_is_your_message(intent, session)
 
@@ -64,7 +80,7 @@ def what_is_your_message(intent, session):
     receiver_name = session["attributes"]["receiver_name"]
     session_attributes = {"receiver_name":receiver_name}
     card_title = "AIM"
-    speech_output = "OK, what is your message to {}".format(receiver_name)
+    speech_output = "OK, what is your message to {}?".format(receiver_name)
     reprompt_text = ""
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
@@ -92,8 +108,7 @@ def verification_of_message(intent, session):
     # if not ok, prompt for repeat of message? re run get_receiver_name()?
     reprompt_text = ""
     # at some point add the message to the db
-    save_msg_to_db(session)
-    should_end_session = True
+    should_end_session = False
     return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
@@ -113,6 +128,12 @@ def save_msg_to_db(session):
         'sender_name': "RedCoat",  # do we want to include sender name?
         'heard': False
     })
+    card_title = "AIM"
+    speech_output = "OK.  Your message is saved."
+    reprompt_text = ""
+    should_end_session = True
+    return build_response(session["attributes"], build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
 
 
 def receive_message(intent, session):
