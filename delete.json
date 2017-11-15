@@ -1,0 +1,43 @@
+{
+  "session": {
+    "new": true,
+    "sessionId": "SessionId.4b0e9d45-98db-484c-abfe-8f160e5c75a7",
+    "application": {
+      "applicationId": "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"
+    },
+    "attributes": {
+        "id": 18,
+        "receiver_name": "Darren"},
+    "user": {
+      "userId": "amzn1.ask.account.<userid>"
+    }
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "EdwRequestId.4228cc9e-f815-4024-8da2-6709a02fe464",
+    "intent": {
+      "name": "DeleteMessage",
+      "slots": {
+      }
+    },
+    "locale": "en-US",
+    "timestamp": "2017-11-14T03:22:03Z"
+  },
+  "context": {
+    "AudioPlayer": {
+      "playerActivity": "IDLE"
+    },
+    "System": {
+      "application": {
+        "applicationId": "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.<userid"
+      },
+      "device": {
+        "supportedInterfaces": {}
+      }
+    }
+  },
+  "version": "1.0"
+}

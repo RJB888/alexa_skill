@@ -40,6 +40,8 @@ def on_intent(intent_request, session):
         return receive_message(intent, session)
     elif intent_name == "VerifyMessage":
         return verification_of_message(intent, session)
+    elif intent_name == "DeleteMessage":
+        return delete_message(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
@@ -91,6 +93,16 @@ def save_msg_to_db(session):
         'heard': False
     })
 
+def delete_message(intent, session):
+    """Delete message from database."""
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('aim_messages')
+    table.delete_item(
+        Key={
+            "id": session["attributes"]["id"],
+            "receiver_name": session["attributes"]["receiver_name"]
+        })
+
 
 def receive_message(intent, session):
     """Return the messages based on receiver name."""
@@ -103,6 +115,8 @@ def receive_message(intent, session):
     speech_output = ""
     for index, row in enumerate(db_response["Items"]):
         if row['receiver_name'].lower() == receiver_name and not row['heard']:
+            session_attributes["receiver_name"] = row["receiver_name"]
+            session_attributes["id"] = row["id"]
             message.append(row["message"])
             table.update_item(
                 Key={
@@ -123,8 +137,8 @@ def receive_message(intent, session):
         speech_output = "Here are the messages for {}. ".format(receiver_name)
         for index, value in enumerate(message):
             speech_output += "Message {}. {}. ".format(index + 1, value)
-    reprompt_text = ""
-    should_end_session = True
+    reprompt_text = "Would you like to save, delete or replay message?"
+    should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
