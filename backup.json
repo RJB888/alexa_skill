@@ -1,0 +1,71 @@
+{
+  "intents": [
+    {
+      "intent": "AMAZON.CancelIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+
+    {
+      "slots": [
+        {
+          "name": "FromName",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "DeleteMessage"
+    },
+
+    {
+      "slots": [
+        {
+          "name": "ForName",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "ReceiveMessage"
+    },
+
+     {
+      "slots": [
+        {
+          "name": "ForName",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "EstablishRecipient"
+    },
+
+     {
+      "slots": [
+        {
+          "name": "Message",
+          "type": "AMAZON.LITERAL"
+        }
+      ],
+      "intent": "VerifyMessage"
+    },
+
+  ]
+}
+
+DeleteMessage delete message from {FromName}
+DeleteMessage delete that message from {FromName}
+DeleteMessage delete from {FromName}
+DeleteMessage remove message from {FromName}
+ReceiveMessage give me messages for {ForName}
+ReceiveMessage play message for {ForName}
+ReceiveMessage listen to messages for {ForName}
+EstablishRecipient leave message for {ForName}
+EstablishRecipient take message for {ForName}
+EstablishRecipient send {ForName} message
+EstablishRecipient message {ForName}
+VerifyMessage the message is {Hello |Message}
+VerifyMessage tell him {Take out the trash |Message}
+VerifyMessage let them know {Four score and seven years ago our fathers brought forth on this continent a new nation conceived in liberty and dedicated to the proposition that all men are created equal  now we are ingaged in the great civil war testing whether that nation or any nation so conceived and so dedicated can long endure we are met on a great battlefield of that war|Message}
+VerifyMessage tell her {God bless the queen |Message}
+
