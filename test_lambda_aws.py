@@ -81,6 +81,13 @@ def test_establish_recipient_returns_output_speech(establish_recipient,
     expected_output = "OK, send a message to DummyName, right?"
     actual_output = result_to_dict['response']['outputSpeech']['text']
     assert expected_output == actual_output
-    # assert 'DummyName' in result_to_dict['sessionAttributes']['receiver_name']
+
+
+def test_receive_message_returns_no_messages(receive_message,
+                                             result_to_dict):
+    """Test no message is returned when receiver has no message."""
+    speech_output = result_to_dict['response']['outputSpeech']['text']
+    expected_output = "There are no messages for dummyname. "
+    assert speech_output == expected_output
 
 

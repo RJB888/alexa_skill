@@ -41,9 +41,9 @@ def establish_recipient():
 
 
 @pytest.fixture
-def establish_no_message():
+def receive_message():
     """Pass EstablishRecipient intents to run lambda function in aws."""
-    aws_call(INTENTS['establish_no_message'])
+    aws_call(INTENTS['receive'])
 
 
 @pytest.fixture
