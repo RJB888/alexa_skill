@@ -2,7 +2,6 @@
 
 import boto3
 import datetime
-# from rx import Observable
 
 
 def lambda_handler(event, context):
@@ -11,7 +10,8 @@ def lambda_handler(event, context):
             "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):
         raise ValueError("Invalid Application ID")
     if event["session"]["new"]:
-        on_session_started({"requestId": event["request"]["requestId"]}, event["session"])
+        on_session_started({"requestId": event["request"]["requestId"]},
+                           event["session"])
     if event["request"]["type"] == "LaunchRequest":
         return on_launch(event["request"], event["session"])
     elif event["request"]["type"] == "IntentRequest":
@@ -44,7 +44,8 @@ def on_intent(intent_request, session):
         return delete_message_by_sender(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
-    elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
+    elif intent_name == "AMAZON.CancelIntent" or 
+                         intent_name == "AMAZON.StopIntent":
         return on_session_ended()
     elif intent_name == "AMAZON.YesIntent":
         return handle_verification(intent, session)
@@ -125,9 +126,7 @@ def verification_of_message(intent, session):
     session["attributes"]["message_body"] = message_body
     card_title = "AIM"
     speech_output = "OK.  Your message to {} is, {}, right?".format(session["attributes"]["receiver_name"], message_body)
-    # if not ok, prompt for repeat of message? re run get_receiver_name()?
     reprompt_text = ""
-    # at some point add the message to the db
     should_end_session = False
     return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
