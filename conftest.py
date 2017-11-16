@@ -9,7 +9,6 @@ import subprocess
 
 INTENTS = {
     "establish": "json/establish_recipient.json",
-    "establish_no_message": "json/establish_no_message.json",
     "create": "json/create_message.json",
     "delete": "json/create_message.json",
     "launch": "json/launch.json",
