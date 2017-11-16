@@ -204,7 +204,7 @@ def replay_message(intent, session):
     speech_output = session["attributes"]["message_body"]
     reprompt_text = ""
     card_title = "AIM"
-    should_end_session = True
+    should_end_session = False
     return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
