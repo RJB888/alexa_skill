@@ -50,7 +50,7 @@ def on_intent(intent_request, session):
         return handle_verification(intent, session)
     elif intent_name == "AMAZON.NoIntent":
         return handle_noIntent(intent, session)
-    elif intent_name == "AMAZON.RepeatIntent":
+    elif intent_name == "ReplayMessage":
         return replay_message(intent, session)
     else:
         raise ValueError("Invalid intent")
