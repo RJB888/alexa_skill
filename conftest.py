@@ -15,6 +15,7 @@ INTENTS = {
     "receive": "json/receive_message.json",
     "send": "json/send_message.json",
     "verify": "json/verify_message.json",
+    "replay": "json/replay.json",
 }
 
 
@@ -50,6 +51,12 @@ def receive_message():
 def launch():
     """Pass Launch intents to run lambda function in aws."""
     aws_call(INTENTS['launch'])
+
+
+@pytest.fixture
+def replay_message():
+    """Pass Launch intents to run lambda function in aws."""
+    aws_call(INTENTS['replay'])
 
 
 @pytest.fixture

@@ -91,3 +91,14 @@ def test_receive_message_returns_no_messages(receive_message,
     assert speech_output == expected_output
 
 
+def test_replay_returns_correct_message(replay_message, result_to_dict):
+    """Test replay returns correct_message."""
+    message = result_to_dict["sessionAttributes"]["message_body"]
+    expected_message = "I am a test message"
+    assert message == expected_message
+
+
+def test_replay_returns_session_false(replay_message, result_to_dict):
+    """Test replay returns end_session False."""
+    end_session = result_to_dict['response']['shouldEndSession']
+    assert not end_session
