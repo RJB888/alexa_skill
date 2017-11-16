@@ -43,7 +43,7 @@ def on_intent(intent_request, session):
     elif intent_name == "DeleteMessage":
         return delete_message_by_sender(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
-        return get_welcome_response()
+        return get_help_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
         return on_session_ended()
     elif intent_name == "AMAZON.YesIntent":
@@ -253,6 +253,17 @@ def get_welcome_response():
     session_attributes = {}
     card_title = "AIM"
     speech_output = "Welcome to AIM messaging"
+    reprompt_text = "Do you want to send or receive a message."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def get_help_response():
+    """Introduce the custom skill's functionality."""
+    session_attributes = {}
+    card_title = "AIM"
+    speech_output = "Here's how to use AIM messaging. For example to send a message to Bob, say, send a message to Bob. And then follow the prompts. To receive a message, say, play messages for Bob. To replay a message, say, replay. To delete a message, say, delete."
     reprompt_text = "Do you want to send or receive a message."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
