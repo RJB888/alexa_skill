@@ -49,14 +49,15 @@ def on_intent(intent_request, session):
     elif intent_name == "AMAZON.YesIntent":
         return handle_verification(intent, session)
     elif intent_name == "AMAZON.NoIntent":
-        return handle_noIntent(intent, session)
+        return handle_nointent(intent, session)
     elif intent_name == "ReplayMessage":
         return replay_message(intent, session)
     else:
-        raise ValueError("Invalid intent")
+        return unsure_response(intent, session)
+        # raise ValueError("Invalid intent")
 
 
-def handle_noIntent(intent, session):
+def handle_nointent(intent, session):
     """Handle reprompts if not repeated exactly."""
     if "message_body" in session["attributes"]:
         return re_prompt_message(intent, session)
@@ -98,7 +99,7 @@ def handle_verification(intent, session):
 def what_is_your_message(intent, session):
     """Repeat function the message that was saved to the database."""
     receiver_name = session["attributes"]["receiver_name"]
-    session_attributes = {"receiver_name":receiver_name}
+    session_attributes = {"receiver_name": receiver_name}
     card_title = "AIM"
     speech_output = "OK, what is your message to {}?".format(receiver_name)
     reprompt_text = ""
@@ -236,7 +237,7 @@ def delete_message_by_sender(intent, session):
 
 
 def on_session_ended():
-    """Closes session, aka the skill is not active."""
+    """Close session, aka the skill is not active."""
     session_attributes = {}
     card_title = "AIM - Thanks"
     speech_output = "Thank you for using AIM.  See you next time!"
@@ -261,7 +262,22 @@ def get_help_response():
     """Introduce the skill's functionality."""
     session_attributes = {}
     card_title = "AIM"
-    speech_output = "Here's how to use AIM messaging. For example to send a message to Bob, say, send a message to Bob. And then follow the prompts. To receive a message, say, play messages for Bob. To replay a message, say, replay. To delete a message, say, delete a message from Bob."
+    speech_output = "Here's how to use AIM messaging. For example to send a \
+                    message to Bob, say, send a message to Bob. And then \
+                    follow the prompts. To receive a message, say, play \
+                    messages for Bob. To replay a message, say, replay.\
+                    To delete a message, say, delete a message from Bob."
+    reprompt_text = "Do you want to send or receive a message."
+    should_end_session = False
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def unsure_response(intent, session):
+    """Will be returned to the user if Alexa was unsure about the intent."""
+    session_attributes = {}
+    card_title = "AIM - unsure response"
+    speech_output = "I'm sorry, I didn't get that. Say help if you need it."
     reprompt_text = "Do you want to send or receive a message."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
@@ -291,7 +307,7 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
 
 
 def build_response(session_attributes, speechlet_response):
-    """Returns any data to persist throughout the session."""
+    """Return any data to persist throughout the session."""
     return {
         "version": "1.0",
         "sessionAttributes": session_attributes,
