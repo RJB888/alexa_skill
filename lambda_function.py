@@ -189,7 +189,11 @@ def receive_message(intent, session):
         for index, value in enumerate(message):
             speech_output += "Message {}. {}. ".format(index + 1, value)
     reprompt_text = ""
-    should_end_session = False
+    if not number_of_messages:
+        should_end_session = True
+    else:
+        should_end_session = False
+
     session_attributes["message_body"] = speech_output
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
