@@ -1,17 +1,17 @@
-"""."""
+"""Functions to build out Alexa Intelligent Messaging Skill."""
 
 import boto3
 import datetime
-# from rx import Observable
 
 
 def lambda_handler(event, context):
-    """."""
+    """Parse out event type and the object, aka context."""
     if (event["session"]["application"]["applicationId"] !=
             "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):
         raise ValueError("Invalid Application ID")
     if event["session"]["new"]:
-        on_session_started({"requestId": event["request"]["requestId"]}, event["session"])
+        on_session_started({"requestId": event["request"]["requestId"]},
+                           event["session"])
     if event["request"]["type"] == "LaunchRequest":
         return on_launch(event["request"], event["session"])
     elif event["request"]["type"] == "IntentRequest":
@@ -21,17 +21,17 @@ def lambda_handler(event, context):
 
 
 def on_session_started(session_started_request, session):
-    """Function to handle any initiation on new session."""
+    """Handle any initiation on new session."""
     print("Starting new session.")
 
 
 def on_launch(launch_request, session):
-    """."""
+    """Handle the launch request function and the session object."""
     return get_welcome_response()
 
 
 def on_intent(intent_request, session):
-    """."""
+    """Conditional logic of series of Alexa skill intents."""
     intent = intent_request["intent"]
     intent_name = intent_request["intent"]["name"]
     if intent_name == "EstablishRecipient":
@@ -44,22 +44,29 @@ def on_intent(intent_request, session):
         return delete_message_by_sender(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
-    elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
+    elif intent_name == "AMAZON.CancelIntent" or 
+                         intent_name == "AMAZON.StopIntent":
         return on_session_ended()
     elif intent_name == "AMAZON.YesIntent":
         return handle_verification(intent, session)
     elif intent_name == "AMAZON.NoIntent":
         return handle_noIntent(intent, session)
+    elif intent_name == "ReplayMessage":
+        return replay_message(intent, session)
     else:
         raise ValueError("Invalid intent")
 
+
 def handle_noIntent(intent, session):
+    """Handle reprompts if not repeated exactly."""
     if "message_body" in session["attributes"]:
         return re_prompt_message(intent, session)
     else:
         return re_prompt_name(intent, session)
 
+
 def re_prompt_message(intent, session):
+    """Reprompt for message when not repeated to user exactly."""
     session["attributes"]["message_body"] = ""
     session_attributes = session["attributes"]
     reprompt_text = ""
@@ -71,6 +78,7 @@ def re_prompt_message(intent, session):
 
 
 def re_prompt_name(intent, session):
+    """Reprompt for name if not repeated to user exactly."""
     session_attributes = {}
     reprompt_text = ""
     card_title = "AIM"
@@ -79,15 +87,17 @@ def re_prompt_name(intent, session):
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
-        
+
 def handle_verification(intent, session):
+    """Handle verification of name or user when not repeated exactly."""
     if "message_body" in session["attributes"]:
         return save_msg_to_db(session)
     else:
         return what_is_your_message(intent, session)
 
+
 def what_is_your_message(intent, session):
-    """Repeat function  the message that was saved to the database."""
+    """Repeat function the message that was saved to the database."""
     receiver_name = session["attributes"]["receiver_name"]
     session_attributes = {"receiver_name":receiver_name}
     card_title = "AIM"
@@ -111,21 +121,19 @@ def get_recipient(intent, session):
 
 
 def verification_of_message(intent, session):
-    """."""
+    """Verify that message is properly formatted."""
     message_body = intent["slots"]["Message"]["value"]
     session["attributes"]["message_body"] = message_body
     card_title = "AIM"
     speech_output = "OK.  Your message to {} is, {}, right?".format(session["attributes"]["receiver_name"], message_body)
-    # if not ok, prompt for repeat of message? re run get_receiver_name()?
     reprompt_text = ""
-    # at some point add the message to the db
     should_end_session = False
     return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
 
 def save_msg_to_db(session):
-    """."""
+    """Save individual message to the database."""
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
@@ -181,8 +189,19 @@ def receive_message(intent, session):
         for index, value in enumerate(message):
             speech_output += "Message {}. {}. ".format(index + 1, value)
     reprompt_text = ""
-    should_end_session = True
+    should_end_session = False
+    session_attributes["message_body"] = speech_output
     return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def replay_message(intent, session):
+    """Replay the last heard message or messages."""
+    speech_output = session["attributes"]["message_body"]
+    reprompt_text = ""
+    card_title = "AIM"
+    should_end_session = True
+    return build_response(session["attributes"], build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
 
@@ -214,7 +233,7 @@ def delete_message_by_sender(intent, session):
 
 
 def on_session_ended():
-    """."""
+    """Closes session, aka the skill is not active."""
     session_attributes = {}
     card_title = "AIM - Thanks"
     speech_output = "Thank you for using AIM.  See you next time!"
@@ -225,7 +244,7 @@ def on_session_ended():
 
 
 def get_welcome_response():
-    """."""
+    """Introduce the custom skill's title and function."""
     session_attributes = {}
     card_title = "AIM"
     speech_output = "Welcome to AIM messaging"
@@ -236,6 +255,7 @@ def get_welcome_response():
 
 
 def build_speechlet_response(title, output, reprompt_text, should_end_session):
+    """Build custom object to be returned and sent to Alexa."""
     return {
         "outputSpeech": {
             "type": "PlainText",
@@ -257,9 +277,9 @@ def build_speechlet_response(title, output, reprompt_text, should_end_session):
 
 
 def build_response(session_attributes, speechlet_response):
+    """Returns any data to persist throughout the session."""
     return {
         "version": "1.0",
         "sessionAttributes": session_attributes,
         "response": speechlet_response
     }
-
