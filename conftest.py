@@ -16,6 +16,7 @@ INTENTS = {
     "send": "json/send_message.json",
     "verify": "json/verify_message.json",
     "replay": "json/replay.json",
+    "invalid_id": "json/invalid_app_id.json",
 }
 
 

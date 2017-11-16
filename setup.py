@@ -11,13 +11,7 @@ setup(
     license='MIT',
     py_modules=[],
     install_requires=['boto3'],
-    extras_require={'test':
-                    [
-                        '--target=/home/darren/CodeFellows/alexa_skill/lib rx',
-                        'pytest',
-                        'pytest-cov',
-                        'tox']
-                    },
+    extras_require={'test': ['python-lambda-local', 'pytest', 'pytest-cov', 'tox']},
     entry_points={
         'console_scripts': []
     }
