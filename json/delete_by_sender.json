@@ -16,9 +16,9 @@
     "intent": {
       "name": "DeleteMessage",
       "slots": {
-        "Name": {
-          "name": "Name",
-          "value": "RedCoat"
+        "forName": {
+          "name": "ForName",
+          "value": "DummyName"
         }
       }
     },

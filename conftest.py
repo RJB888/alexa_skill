@@ -3,14 +3,14 @@
 import ast
 import pytest
 import subprocess
-# time.sleep() maybe needed if internect connection is slow
+# time.sleep() maybe needed if internet connection is slow
 # import time
 
 
 INTENTS = {
     "establish": "json/establish_recipient.json",
     "create": "json/create_message.json",
-    "delete": "json/create_message.json",
+    "delete": "json/delete_by_sender.json",
     "launch": "json/launch.json",
     "receive": "json/receive_message.json",
     "send": "json/send_message.json",
@@ -55,8 +55,20 @@ def launch():
 
 @pytest.fixture
 def replay_message():
-    """Pass Launch intents to run lambda function in aws."""
+    """Pass replay intents to run lambda function in aws."""
     aws_call(INTENTS['replay'])
+
+
+@pytest.fixture
+def delete_message():
+    """Pass delete intents to run lambda function in aws."""
+    aws_call(INTENTS['delete'])
+
+
+@pytest.fixture
+def verify_message():
+    """Pass verify intents to run lambda function in aws."""
+    aws_call(INTENTS['verify'])
 
 
 @pytest.fixture

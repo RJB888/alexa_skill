@@ -83,12 +83,40 @@ def test_establish_recipient_returns_output_speech(establish_recipient,
     assert expected_output == actual_output
 
 
+@pytest.mark.parametrize('response, expected', STANDARDS)
+def test_establish_receive_message_standards(
+        receive_message, result_to_dict, response, expected):
+    """Test several expected output are returned from EstablishRecipient."""
+    if len(response) == 1:
+        result = result_to_dict[response[0]]
+    elif len(response) == 3:
+        result = result_to_dict[response[0]][response[1]][response[2]]
+    elif len(response) == 4:
+        result = result_to_dict[response[0]] \
+         [response[1]][response[2]][response[3]]
+    assert result == expected
+
+
 def test_receive_message_returns_no_messages(receive_message,
                                              result_to_dict):
     """Test no message is returned when receiver has no message."""
     speech_output = result_to_dict['response']['outputSpeech']['text']
     expected_output = "There are no messages for dummyname. "
     assert speech_output == expected_output
+
+
+@pytest.mark.parametrize('response, expected', STANDARDS)
+def test_establish_replay_message_standards(
+        replay_message, result_to_dict, response, expected):
+    """Test several expected output are returned from EstablishRecipient."""
+    if len(response) == 1:
+        result = result_to_dict[response[0]]
+    elif len(response) == 3:
+        result = result_to_dict[response[0]][response[1]][response[2]]
+    elif len(response) == 4:
+        result = result_to_dict[response[0]] \
+         [response[1]][response[2]][response[3]]
+    assert result == expected
 
 
 def test_replay_returns_correct_message(replay_message, result_to_dict):
@@ -102,3 +130,24 @@ def test_replay_returns_session_false(replay_message, result_to_dict):
     """Test replay returns end_session False."""
     end_session = result_to_dict['response']['shouldEndSession']
     assert not end_session
+
+
+# def test_delete_message_by_sender_returns_deleted_message(delete_message,
+                                                          # result_to_dict):
+    # """Speech output should return correct message."""
+    # speech_output = result_to_dict['response']['outputSpeech']['text']
+    # expected_output = "Your message has been deleted."
+    # assert speech_output == expected_output
+
+
+@pytest.mark.parametrize('response, expected', STANDARDS)
+def test_verify_message(verify_message, result_to_dict, response, expected):
+    """Test numerous output as expected are returned from launch of skill."""
+    if len(response) == 1:
+        result = result_to_dict[response[0]]
+    elif len(response) == 3:
+        result = result_to_dict[response[0]][response[1]][response[2]]
+    elif len(response) == 4:
+        result = result_to_dict[response[0]] \
+         [response[1]][response[2]][response[3]]
+    assert result == expected
