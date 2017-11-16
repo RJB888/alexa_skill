@@ -1,0 +1,62 @@
+{
+  "intents": [
+    {
+      "intent": "ReplayMessage"
+    },
+    {
+      "intent": "AMAZON.CancelIntent"
+    },
+    {
+      "intent": "AMAZON.NoIntent"
+    },
+    {
+      "intent": "AMAZON.YesIntent"
+    },
+    {
+      "intent": "AMAZON.StopIntent"
+    },
+    {
+      "intent": "AMAZON.HelpIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "FromName",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "DeleteMessage"
+    },
+    {
+      "slots": [
+        {
+          "name": "ForName",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "ReceiveMessage"
+    },
+    {
+      "slots": [
+        {
+          "name": "ForName",
+          "type": "AMAZON.US_FIRST_NAME"
+        },
+        {
+          "name": "FromName",
+          "type": "AMAZON.US_FIRST_NAME"
+        }
+      ],
+      "intent": "EstablishRecipient"
+    },
+    {
+      "slots": [
+        {
+          "name": "Message",
+          "type": "AMAZON.LITERAL"
+        }
+      ],
+      "intent": "VerifyMessage"
+    }
+  ]
+}

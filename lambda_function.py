@@ -41,7 +41,7 @@ def on_intent(intent_request, session):
     elif intent_name == "VerifyMessage":
         return verification_of_message(intent, session)
     elif intent_name == "DeleteMessage":
-        return delete_message_by_sender(intent, session)
+        return delete_message(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_help_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
@@ -143,7 +143,6 @@ def save_msg_to_db(session):
         'receiver_name': session["attributes"]["receiver_name"],
         'date': datetime.datetime.now().strftime('%m/%d/%y'),
         'message': session["attributes"]["message_body"],
-        'sender_name': "RedCoat",  # do we want to include sender name?
         'heard': False
     })
     card_title = "AIM"
@@ -208,20 +207,20 @@ def replay_message(intent, session):
         card_title, speech_output, reprompt_text, should_end_session))
 
 
-def delete_message_by_sender(intent, session):
+def delete_message(intent, session):
     """Delete message from database."""
     session_attributes = {}
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
-    sender_name = intent["slots"]["FromName"]["value"]
-    senders_last_message = sorted(db_response["Items"], key=lambda x: x['id'])
+    receiver_name = intent["slots"]["ForName"]["value"]
+    receivers_last_message = sorted(db_response["Items"], key=lambda x: x['id'])
     card_title = "Delete Message"
     speech_output = "Your message has been deleted."
     reprompt_text = ""
     should_end_session = True
-    for i in senders_last_message[::-1]:
-        if sender_name == i["sender_name"]:
+    for i in receivers_last_message[::-1]:
+        if receiver_name == i["receiver_name"]:
             table.delete_item(
                 Key={
                     "id": i["id"],
@@ -230,7 +229,7 @@ def delete_message_by_sender(intent, session):
             return build_response(session_attributes, build_speechlet_response(
                 card_title, speech_output, reprompt_text, should_end_session))
 
-    speech_output = "You haven't left a message."
+    speech_output = "You don't have any messages."
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
 
