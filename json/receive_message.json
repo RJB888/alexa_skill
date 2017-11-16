@@ -16,9 +16,9 @@
     "intent": {
       "name": "ReceiveMessage",
       "slots": {
-        "Name": {
-          "name": "Name",
-          "value": "Bob"
+        "ForName": {
+          "name": "ForName",
+          "value": "DummyName"
         }
       }
     },
