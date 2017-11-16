@@ -25,7 +25,7 @@ def test_launch_standards(launch, result_to_dict, response, expected):
 
 def test_launch_session_attributes(launch, result_to_dict):
     """SessionAttributes should return empty from launch of skill."""
-    assert not result_to_dict['sessionAttributes']
+    assert result_to_dict['sessionAttributes'] == {}
 
 
 def test_launch_card_content(launch, result_to_dict):
@@ -65,6 +65,22 @@ def test_establish_recipient_standards(
 
 def test_establish_recipient_returns_receiver(establish_recipient,
                                               result_to_dict):
-    """Test that the function will return the recipient value of 'Bob'."""
+    """Test receiver_name is 'DummyName'."""
     assert 'DummyName' in result_to_dict['sessionAttributes']['receiver_name']
+
+
+def test_establish_recipient_session_attributes(establish_recipient,
+                                                result_to_dict):
+    """Test that session attributes are not empty dict"""
+    assert result_to_dict['sessionAttributes']
+
+
+def test_establish_recipient_returns_output_speech(establish_recipient,
+                                                   result_to_dict):
+    """Test output speech for alexa is correct output."""
+    expected_output = "OK, send a message to DummyName, right?"
+    actual_output = result_to_dict['response']['outputSpeech']['text']
+    assert expected_output == actual_output
+    # assert 'DummyName' in result_to_dict['sessionAttributes']['receiver_name']
+
 
