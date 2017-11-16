@@ -53,8 +53,7 @@ def on_intent(intent_request, session):
     elif intent_name == "ReplayMessage":
         return replay_message(intent, session)
     else:
-        return unsure_response(intent, session)
-        # raise ValueError("Invalid intent")
+        raise ValueError("Invalid intent")
 
 
 def handle_nointent(intent, session):
@@ -267,17 +266,6 @@ def get_help_response():
                     follow the prompts. To receive a message, say, play \
                     messages for Bob. To replay a message, say, replay.\
                     To delete a message, say, delete a message from Bob."
-    reprompt_text = "Do you want to send or receive a message."
-    should_end_session = False
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-
-def unsure_response(intent, session):
-    """Will be returned to the user if Alexa was unsure about the intent."""
-    session_attributes = {}
-    card_title = "AIM - unsure response"
-    speech_output = "I'm sorry, I didn't get that. Say help if you need it."
     reprompt_text = "Do you want to send or receive a message."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
