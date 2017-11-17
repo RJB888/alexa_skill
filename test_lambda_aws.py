@@ -179,6 +179,12 @@ def test_help_function(help_message, result_to_dict):
     assert response == message
 
 
+def test_unsure_function(unsure_message, result_to_dict):
+    """."""
+    card_from_aim = result_to_dict['response']['card']['title']
+    expected_text = 'AIM - unsure response'
+    assert card_from_aim == expected_text
+
 def test_stop_function(stop_message, result_to_dict):
     """Test that the stop function returns proper response."""
     response = result_to_dict['response']['outputSpeech']['text']

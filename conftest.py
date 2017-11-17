@@ -19,6 +19,7 @@ INTENTS = {
     "replay": "json/replay.json",
     "invalid_id": "json/invalid_app_id.json",
     "help": "json/help.json",
+    "unsure": "json/unsure.json",
     "stop": "json/stop.json",
     "yes": "json/yes.json",
     "yes_no_message": "json/yes_no_message.json",
@@ -90,6 +91,12 @@ def wrong_app_id():
 def help_message():
     """Pass help intents to run lambda function in aws."""
     aws_call(INTENTS['help'])
+
+
+@pytest.fixture
+def unsure_message():
+    """Pass help intents to run lambda function in aws."""
+    aws_call(INTENTS['unsure'])
 
 
 @pytest.fixture
