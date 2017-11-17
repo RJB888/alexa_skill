@@ -13,7 +13,7 @@ STANDARDS = [
 
 @pytest.mark.parametrize('response, expected', STANDARDS)
 def test_launch_standards(launch, result_to_dict, response, expected):
-    """Test numerous output as expected are returned from launch of skill."""
+    """Test multiple output as expected are returned from launch of skill."""
     if len(response) == 1:
         result = result_to_dict[response[0]]
     elif len(response) == 3:
@@ -133,6 +133,13 @@ def test_replay_returns_session_false(replay_message, result_to_dict):
     assert not end_session
 
 
+def test_no_intent_with_message_body(no_intent, result_to_dict):
+    """NoIntent should return empty string because message erased."""
+    # message_body = "I am a test message"
+    message_from_aws = result_to_dict["sessionAttributes"]["message_body"]
+    assert "" == message_from_aws
+
+
 # def test_delete_message_by_sender_returns_deleted_message(delete_message,
                                                           # result_to_dict):
     # """Speech output should return correct message."""
@@ -176,7 +183,7 @@ def test_delete_function(delete_message_from_db, result_to_dict):
     """Test that the delete function deletes message from DB."""
     test = True
     for i in delete_message_from_db["Items"]:
-        if "DummyDeleteName" in i:
+        if "DummyDeleteName" in i:  # pragma: no cover
             test = False
     assert test
 
@@ -185,7 +192,7 @@ def test_delete_no_message_function(delete_no_message, result_to_dict):
     """Test that the delete function returns proper message when there is nothing to delete."""
     test = False
     for i in delete_no_message["Items"]:
-        if "DummyDeleteName" in i:
+        if "DummyDeleteName" in i:  # pragma: no cover
             test = True
     response = result_to_dict['response']['outputSpeech']['text']
     message = "You don't have any messages."
