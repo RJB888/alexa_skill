@@ -99,7 +99,7 @@ def what_is_your_message(intent, session):
     """Repeat function the message that was saved to the database."""
     receiver_name = session["attributes"]["receiver_name"]
     session_attributes = {"receiver_name": receiver_name}
-    card_title = "AIM"
+    card_title = "what is your message"
     speech_output = "OK, what is your message to {}?".format(receiver_name)
     reprompt_text = ""
     should_end_session = False
