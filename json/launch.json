@@ -16,8 +16,8 @@
     "intent": {
       "name": "",
       "slots": {
-        "Name": {
-          "name": "Name",
+        "ForName": {
+          "name": "ForName",
           "value": "Darren"
         }
       }

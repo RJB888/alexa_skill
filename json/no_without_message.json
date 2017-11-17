@@ -14,11 +14,11 @@
     "type": "IntentRequest",
     "requestId": "EdwRequestId.4228cc9e-f815-4024-8da2-6709a02fe464",
     "intent": {
-      "name": "DeleteMessage",
+      "name": "AMAZON.NoIntent",
       "slots": {
-        "Name": {
-          "name": "Name",
-          "value": "RedCoat"
+        "ForName": {
+          "name": "ForName",
+          "value": "DummyName"
         }
       }
     },

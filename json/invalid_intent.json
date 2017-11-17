@@ -5,7 +5,7 @@
     "application": {
       "applicationId": "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"
     },
-    "attributes": {"receiver_name": "Bob"},
+    "attributes": {},
     "user": {
       "userId": "amzn1.ask.account.<userid>"
     }
@@ -14,11 +14,11 @@
     "type": "IntentRequest",
     "requestId": "EdwRequestId.4228cc9e-f815-4024-8da2-6709a02fe464",
     "intent": {
-      "name": "VerifyMessage",
+      "name": "ImInvalid",
       "slots": {
-        "Message": {
-          "name": "Name",
-          "value": "I am the test message."
+        "ForName": {
+          "name": "ForName",
+          "value": "DummyName"
         }
       }
     },
