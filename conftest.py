@@ -73,6 +73,12 @@ def verify_message():
 
 
 @pytest.fixture
+def wrong_app_id():
+    """Pass verify intents to run lambda function in aws."""
+    aws_call(INTENTS['invalid_id'])
+
+
+@pytest.fixture
 def result_to_dict():
     """Get results from aws results that have been saved to file."""
     with open('returned.txt', 'r') as f:

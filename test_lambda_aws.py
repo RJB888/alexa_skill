@@ -1,6 +1,7 @@
 """Test module for the AWS lambda function."""
 
 import pytest
+import subprocess
 
 STANDARDS = [
     (['version'], '1.0'),
