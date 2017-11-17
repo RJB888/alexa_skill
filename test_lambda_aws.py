@@ -183,7 +183,7 @@ def test_delete_function(delete_message_from_db, result_to_dict):
     """Test that the delete function deletes message from DB."""
     test = True
     for i in delete_message_from_db["Items"]:
-        if "DummyDeleteName" in i:
+        if "DummyDeleteName" in i:  # pragma: no cover
             test = False
     assert test
 
@@ -192,7 +192,7 @@ def test_delete_no_message_function(delete_no_message, result_to_dict):
     """Test that the delete function returns proper message when there is nothing to delete."""
     test = False
     for i in delete_no_message["Items"]:
-        if "DummyDeleteName" in i:
+        if "DummyDeleteName" in i:  # pragma: no cover
             test = True
     response = result_to_dict['response']['outputSpeech']['text']
     message = "You don't have any messages."
