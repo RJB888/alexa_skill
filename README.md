@@ -55,6 +55,8 @@ You can also say "help" and have Alexa give you a list of options available.
 
 - Incorporate the Beta Skill builder package to use Alexa's built-in ability to prompt for messages and verify message content.
 
+- Incorporate message indicator lights to show a message has been recorded.
+
 ## Contributing
 
 
