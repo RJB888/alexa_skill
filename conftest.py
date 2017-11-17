@@ -21,8 +21,10 @@ INTENTS = {
     "help": "json/help.json",
     "stop": "json/stop.json",
     "yes": "json/yes.json",
+    "yes_no_message": "json/yes_no_message.json",
     "delete_no_message": "json/delete_no_message.json",
-    "no_intent": "json/no.json"
+    "no_intent": "json/no.json",
+    "no_intent_no_message": "json/no_without_message.json"
 }
 
 
@@ -103,6 +105,12 @@ def no_intent():
 
 
 @pytest.fixture
+def no_intent_no_message():
+    """Pass stop intents to run lambda function in aws."""
+    aws_call(INTENTS['no_intent_no_message'])
+
+
+@pytest.fixture
 def delete_message_from_db():
     """Pass delete intents to run lambda function in aws."""
     aws_call(INTENTS['yes'])
@@ -111,6 +119,11 @@ def delete_message_from_db():
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
     return db_response
+
+
+@pytest.fixture
+def yes_reprompt():
+    aws_call(INTENTS['yes_no_message'])
 
 
 @pytest.fixture

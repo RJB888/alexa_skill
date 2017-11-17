@@ -140,6 +140,13 @@ def test_no_intent_with_message_body(no_intent, result_to_dict):
     assert "" == message_from_aws
 
 
+def test_no_intent_without_message_body(no_intent_no_message, result_to_dict):
+    """NoIntent should return empty session attribute.."""
+    # message_body = "I am a test message"
+    message_from_aws = result_to_dict["sessionAttributes"]
+    assert message_from_aws == {}
+
+
 # def test_delete_message_by_sender_returns_deleted_message(delete_message,
                                                           # result_to_dict):
     # """Speech output should return correct message."""
@@ -186,6 +193,13 @@ def test_delete_function(delete_message_from_db, result_to_dict):
         if "DummyDeleteName" in i:  # pragma: no cover
             test = False
     assert test
+
+
+def test_yes_intent_reprompts_for_message(yes_reprompt, result_to_dict):
+    """Yes intent should reprompt if no message in slot."""
+    card = "what is your message"
+    card_from_aim = result_to_dict['response']['card']['title']
+    assert card == card_from_aim
 
 
 def test_delete_no_message_function(delete_no_message, result_to_dict):
