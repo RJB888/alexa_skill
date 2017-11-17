@@ -13,7 +13,7 @@ STANDARDS = [
 
 @pytest.mark.parametrize('response, expected', STANDARDS)
 def test_launch_standards(launch, result_to_dict, response, expected):
-    """Test numerous output as expected are returned from launch of skill."""
+    """Test multiple output as expected are returned from launch of skill."""
     if len(response) == 1:
         result = result_to_dict[response[0]]
     elif len(response) == 3:
