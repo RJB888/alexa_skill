@@ -152,3 +152,41 @@ def test_verify_message(verify_message, result_to_dict, response, expected):
         result = result_to_dict[response[0]] \
          [response[1]][response[2]][response[3]]
     assert result == expected
+
+
+def test_help_function(help_message, result_to_dict):
+    """Test that the help function returns proper response."""
+    response = result_to_dict['response']['outputSpeech']['text']
+    message = "Here's how to use AIM messaging. For example to send a \
+                    message to Bob, say, send a message to Bob. And then \
+                    follow the prompts. To receive a message, say, play \
+                    messages for Bob. To replay a message, say, replay.\
+                    To delete a message, say, delete a message from Bob."
+    assert response == message
+
+
+def test_stop_function(stop_message, result_to_dict):
+    """Test that the stop function returns proper response."""
+    response = result_to_dict['response']['outputSpeech']['text']
+    message = "Thank you for using AIM.  See you next time!"
+    assert response == message
+
+
+def test_delete_function(delete_message_from_db, result_to_dict):
+    """Test that the delete function deletes message from DB."""
+    test = True
+    for i in delete_message_from_db["Items"]:
+        if "DummyDeleteName" in i:
+            test = False
+    assert test
+
+
+def test_delete_no_message_function(delete_no_message, result_to_dict):
+    """Test that the delete function returns proper message when there is nothing to delete."""
+    test = False
+    for i in delete_no_message["Items"]:
+        if "DummyDeleteName" in i:
+            test = True
+    response = result_to_dict['response']['outputSpeech']['text']
+    message = "You don't have any messages."
+    assert not test and message == response
