@@ -133,6 +133,13 @@ def test_replay_returns_session_false(replay_message, result_to_dict):
     assert not end_session
 
 
+def test_no_intent_with_message_body(no_intent, result_to_dict):
+    """NoIntent should return empty string because message erased."""
+    # message_body = "I am a test message"
+    message_from_aws = result_to_dict["sessionAttributes"]["message_body"]
+    assert "" == message_from_aws
+
+
 # def test_delete_message_by_sender_returns_deleted_message(delete_message,
                                                           # result_to_dict):
     # """Speech output should return correct message."""

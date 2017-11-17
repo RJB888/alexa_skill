@@ -21,7 +21,8 @@ INTENTS = {
     "help": "json/help.json",
     "stop": "json/stop.json",
     "yes": "json/yes.json",
-    "delete_no_message": "json/delete_no_message.json"
+    "delete_no_message": "json/delete_no_message.json",
+    "no_intent": "json/no.json"
 }
 
 
@@ -93,6 +94,12 @@ def help_message():
 def stop_message():
     """Pass stop intents to run lambda function in aws."""
     aws_call(INTENTS['stop'])
+
+
+@pytest.fixture
+def no_intent():
+    """Pass stop intents to run lambda function in aws."""
+    aws_call(INTENTS['no_intent'])
 
 
 @pytest.fixture

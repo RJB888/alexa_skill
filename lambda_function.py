@@ -7,7 +7,7 @@ import datetime
 def lambda_handler(event, context):
     """Parse out event type and the object, aka context."""
     if (event["session"]["application"]["applicationId"] !=
-            "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):
+            "amzn1.ask.skill.ff117040-72fc-409a-a82f-cdba631d7f2d"):  # pragma: no cover
         raise ValueError("Invalid Application ID")
     if event["session"]["new"]:
         on_session_started({"requestId": event["request"]["requestId"]},
@@ -53,7 +53,7 @@ def on_intent(intent_request, session):
     elif intent_name == "ReplayMessage":
         return replay_message(intent, session)
     else:
-        raise ValueError("Invalid intent")
+        raise ValueError("Invalid intent")  # pragma: no cover
 
 
 def handle_nointent(intent, session):
