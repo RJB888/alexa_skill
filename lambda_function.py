@@ -213,14 +213,14 @@ def delete_message(intent, session):
     dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('aim_messages')
     db_response = table.scan()
-    receiver_name = intent["slots"]["ForName"]["value"]
+    receiver_name = intent["slots"]["ForName"]["value"].lower()
     receivers_last_message = sorted(db_response["Items"], key=lambda x: x['id'])
     card_title = "Delete Message"
     speech_output = "Your message has been deleted."
     reprompt_text = ""
     should_end_session = True
     for i in receivers_last_message[::-1]:
-        if receiver_name == i["receiver_name"]:
+        if receiver_name == i["receiver_name"].lower():
             table.delete_item(
                 Key={
                     "id": i["id"],
