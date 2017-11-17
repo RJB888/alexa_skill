@@ -83,6 +83,7 @@ def wrong_app_id():
     aws_call(INTENTS['invalid_id'])
 
 
+@pytest.fixture
 def help_message():
     """Pass help intents to run lambda function in aws."""
     aws_call(INTENTS['help'])
