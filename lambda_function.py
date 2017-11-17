@@ -19,7 +19,7 @@ def lambda_handler(event, context):
             return on_intent(event["request"], event["session"])
         elif event["request"]["type"] == "SessionEndedRequest":
             return on_session_ended(event["request"], event["session"])
-    except KeyError:
+    except:
         return unsure_response(event["request"]["intent"], event["session"])
 
 
