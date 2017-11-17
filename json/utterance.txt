@@ -1,0 +1,23 @@
+ReplayMessage repeat
+ReplayMessage replay
+ReplayMessage play that again
+DeleteMessage delete message for {ForName}
+DeleteMessage delete that message for {ForName}
+DeleteMessage delete for {ForName}
+DeleteMessage remove message for {ForName}
+ReceiveMessage give me messages for {ForName}
+ReceiveMessage play message for {ForName}
+ReceiveMessage listen to messages for {ForName}
+EstablishRecipient send a message to {ForName} from {FromName}
+EstablishRecipient send a message from {FromName} to {ForName}
+EstablishRecipient send {ForName} a message from {FromName}
+EstablishRecipient leave message for {ForName}
+EstablishRecipient take message for {ForName}
+EstablishRecipient send {ForName} message
+EstablishRecipient message {ForName}
+EstablishRecipient {ForName}
+VerifyMessage the message is {Hello |Message}
+VerifyMessage tell him {Take out the trash |Message}
+VerifyMessage {Take out the trash |Message}
+VerifyMessage let them know {Four score and seven years ago our fathers brought forth on this continent a new nation conceived in liberty and dedicated to the proposition that all men are created equal  now we are ingaged in the great civil war testing whether that nation or any nation so conceived and so dedicated can long endure we are met on a great battlefield of that war|Message}
+VerifyMessage tell her {God bless the queen |Message}

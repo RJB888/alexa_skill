@@ -3,6 +3,7 @@
 import ast
 import pytest
 import subprocess
+import boto3
 # time.sleep() maybe needed if internet connection is slow
 # import time
 
@@ -10,12 +11,16 @@ import subprocess
 INTENTS = {
     "establish": "json/establish_recipient.json",
     "create": "json/create_message.json",
-    "delete": "json/delete_by_sender.json",
+    "delete": "json/delete_from_db.json",
     "launch": "json/launch.json",
     "receive": "json/receive_message.json",
     "send": "json/send_message.json",
     "verify": "json/verify_message.json",
     "replay": "json/replay.json",
+    "help": "json/help.json",
+    "stop": "json/stop.json",
+    "yes": "json/yes.json",
+    "delete_no_message": "json/delete_no_message.json"
 }
 
 
@@ -69,6 +74,39 @@ def delete_message():
 def verify_message():
     """Pass verify intents to run lambda function in aws."""
     aws_call(INTENTS['verify'])
+
+
+@pytest.fixture
+def help_message():
+    """Pass help intents to run lambda function in aws."""
+    aws_call(INTENTS['help'])
+
+
+@pytest.fixture
+def stop_message():
+    """Pass stop intents to run lambda function in aws."""
+    aws_call(INTENTS['stop'])
+
+
+@pytest.fixture
+def delete_message_from_db():
+    """Pass delete intents to run lambda function in aws."""
+    aws_call(INTENTS['yes'])
+    aws_call(INTENTS['delete'])
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('aim_messages')
+    db_response = table.scan()
+    return db_response
+
+
+@pytest.fixture
+def delete_no_message():
+    """Pass delete intents to run lambda function in aws."""
+    aws_call(INTENTS['delete_no_message'])
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('aim_messages')
+    db_response = table.scan()
+    return db_response
 
 
 @pytest.fixture
